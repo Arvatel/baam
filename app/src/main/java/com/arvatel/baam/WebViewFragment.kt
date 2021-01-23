@@ -1,19 +1,71 @@
 package com.arvatel.baam
 
+import android.app.Activity
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.webkit.CookieManager
+import android.webkit.WebView
+import android.webkit.WebViewClient
+import android.widget.Toast
+import androidx.fragment.app.Fragment
+import androidx.navigation.Navigation
+import kotlinx.android.synthetic.main.fragment_web_view.view.*
 
 
 class WebViewFragment : Fragment() {
+
+    val mainUrl : String = "https://baam.duckdns.org/"
+    private lateinit var mainView: View
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_web_view, container, false)
+        val view = inflater.inflate(R.layout.fragment_web_view, container, false)
+
+        mainView = view
+        val myWebView : WebView = view.webView
+        myWebView.loadUrl(mainUrl)
+
+        myWebView.webViewClient = object : WebViewClient() {
+            override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
+                if (url == mainUrl){
+                    goToScan()
+                }
+//                Toast.makeText((activity as Activity), "Trying to redirect {$url}", Toast.LENGTH_LONG).show()
+                Log.d("My Webview", url)
+
+                return false //Allow WebView to load url
+            }
+
+            override fun onPageFinished(view: WebView?, url: String?) {
+                if (url == mainUrl)
+//                Toast.makeText((activity as Activity), "Page finished {$url}", Toast.LENGTH_LONG).show()
+
+                if (view != null) {
+                    goToScan()
+                }
+
+                super.onPageFinished(view, url)
+            }
+        }
+        myWebView.settings.javaScriptEnabled = true
+
+        return view
+    }
+
+    fun goToScan(){
+        val cookieManager : CookieManager = CookieManager.getInstance()
+        cookieManager.acceptCookie()
+        var cookie : String? = null
+
+        if (cookieManager.hasCookies())
+            cookie = cookieManager.getCookie(mainUrl)
+
+        (activity as InterfaceCookieSaver).setCookie(cookie)
+        Navigation.findNavController(mainView).navigate(R.id.action_webViewFragment_to_QRScanner)
     }
 }

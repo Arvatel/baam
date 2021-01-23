@@ -17,10 +17,12 @@ import com.budiyev.android.codescanner.DecodeCallback
 class QRScannerFragment : Fragment() {
 
     private lateinit var codeScanner: CodeScanner
+    private lateinit var mainView: View
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_q_r_scanner, container, false)
+        mainView = inflater.inflate(R.layout.fragment_q_r_scanner, container, false)
+        return mainView
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -30,12 +32,24 @@ class QRScannerFragment : Fragment() {
         codeScanner.decodeCallback = DecodeCallback {
             activity.runOnUiThread {
                 Toast.makeText(activity, it.text, Toast.LENGTH_LONG).show()
+                saveQR(it.text)
             }
         }
         scannerView.setOnClickListener {
             codeScanner.startPreview()
         }
         requestPermissions()
+    }
+
+    private fun saveQR(qr : String?){
+
+        val data = qr?.substringAfter('#')
+
+        (activity as InterfaceQRSaver).setSession(data?.substringBefore('-'))
+        (activity as InterfaceQRSaver).setSecretCode(data?.substringAfter('-'))
+
+        Toast.makeText(activity, "Session: ${(activity as InterfaceQRSaver).getSession()}, " +
+                "SecretCode: ${(activity as InterfaceQRSaver).getSecretCode()}", Toast.LENGTH_LONG).show()
     }
 
     override fun onResume() {

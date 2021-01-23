@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_navigation"
-    app:startDestination="@id/QRScanner">
+    app:startDestination="@id/webViewFragment">
     <fragment
         android:id="@+id/QRScanner"
         android:name="com.arvatel.baam.QRScannerFragment"
