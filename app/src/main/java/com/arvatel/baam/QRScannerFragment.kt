@@ -9,9 +9,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
+import androidx.navigation.Navigation
 import com.budiyev.android.codescanner.CodeScanner
 import com.budiyev.android.codescanner.CodeScannerView
 import com.budiyev.android.codescanner.DecodeCallback
+import kotlinx.android.synthetic.main.fragment_q_r_scanner.view.*
 
 
 class QRScannerFragment : Fragment() {
@@ -33,10 +35,18 @@ class QRScannerFragment : Fragment() {
             activity.runOnUiThread {
                 Toast.makeText(activity, it.text, Toast.LENGTH_LONG).show()
                 saveQR(it.text)
+
+                val controller = Controller()
+                controller.start((activity as InterfaceDataSaver).getCookie(),
+                        (activity as InterfaceDataSaver).getSession(), (activity as InterfaceDataSaver).getSecretCode())
             }
         }
         scannerView.setOnClickListener {
             codeScanner.startPreview()
+        }
+
+        view.button2.setOnClickListener {
+            (activity as InterfaceSendRequest).sendRequest()
         }
         requestPermissions()
     }
@@ -45,12 +55,13 @@ class QRScannerFragment : Fragment() {
 
         val data = qr?.substringAfter('#')
 
-        (activity as InterfaceQRSaver).setSession(data?.substringBefore('-'))
-        (activity as InterfaceQRSaver).setSecretCode(data?.substringAfter('-'))
+        (activity as InterfaceDataSaver).setSession(data?.substringBefore('-'))
+        (activity as InterfaceDataSaver).setSecretCode(data?.substringAfter('-'))
 
-        Toast.makeText(activity, "Session: ${(activity as InterfaceQRSaver).getSession()}, " +
-                "SecretCode: ${(activity as InterfaceQRSaver).getSecretCode()}", Toast.LENGTH_LONG).show()
+        Toast.makeText(activity, "Session: ${(activity as InterfaceDataSaver).getSession()}, " +
+                "SecretCode: ${(activity as InterfaceDataSaver).getSecretCode()}", Toast.LENGTH_LONG).show()
     }
+
 
     override fun onResume() {
         super.onResume()

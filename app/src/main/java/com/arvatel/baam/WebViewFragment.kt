@@ -42,8 +42,6 @@ class WebViewFragment : Fragment() {
             }
 
             override fun onPageFinished(view: WebView?, url: String?) {
-                if (url == mainUrl)
-//                Toast.makeText((activity as Activity), "Page finished {$url}", Toast.LENGTH_LONG).show()
 
                 if (view != null) {
                     goToScan()
@@ -53,6 +51,10 @@ class WebViewFragment : Fragment() {
             }
         }
         myWebView.settings.javaScriptEnabled = true
+
+//        view.button.setOnClickListener {
+//            Navigation.findNavController(mainView).navigate(R.id.action_webViewFragment_to_QRScanner)
+//        }
 
         return view
     }
@@ -65,7 +67,10 @@ class WebViewFragment : Fragment() {
         if (cookieManager.hasCookies())
             cookie = cookieManager.getCookie(mainUrl)
 
-        (activity as InterfaceCookieSaver).setCookie(cookie)
+        (activity as InterfaceDataSaver).setCookie(cookie)
+        Toast.makeText((activity as Activity), "Cookie: {$cookie}", Toast.LENGTH_LONG).show()
         Navigation.findNavController(mainView).navigate(R.id.action_webViewFragment_to_QRScanner)
     }
+
+
 }

@@ -1,28 +1,29 @@
 package com.arvatel.baam
 
 import android.Manifest
-import android.app.Activity
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 
-interface InterfaceCookieSaver{
+
+interface InterfaceDataSaver{
     fun getCookie() : String?
-    fun setCookie(c : String?)
-}
-
-interface InterfaceQRSaver{
-    fun setSession(s : String?)
-    fun setSecretCode(s : String?)
+    fun setCookie(c: String?)
     fun getSession() : String?
+    fun setSession(s: String?)
     fun getSecretCode() : String?
+    fun setSecretCode(sc: String?)
 }
 
-class MainActivity : AppCompatActivity(), InterfaceCookieSaver, InterfaceQRSaver {
+interface InterfaceSendRequest{
+    fun sendRequest()
+}
 
-    private var cookie : String? = null
-    private var session : String? = null
-    private var secretCode : String? = null
+class MainActivity : AppCompatActivity(), InterfaceDataSaver{
+
+    private var cookie: String? = null
+    private var secretCode: String? = null
+    private var session: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,26 +41,34 @@ class MainActivity : AppCompatActivity(), InterfaceCookieSaver, InterfaceQRSaver
     }
 
     override fun getCookie() : String? {
-        return cookie
-    }
+    return cookie
+}
 
-    override fun setCookie(c : String?) {
-        cookie = c
+    override fun setCookie(c: String?) {
+        if (c != null) {
+            cookie = c
+        }
     }
 
     override fun setSession(s: String?) {
-        session = s
+        if (s != null) {
+            session = s
+        }
     }
-
-    override fun setSecretCode(s: String?) {
-        secretCode = s
-    }
-
     override fun getSession(): String? {
         return session
+    }
+
+    override fun setSecretCode(sc: String?) {
+        if (sc != null) {
+            secretCode = sc
+        }
     }
 
     override fun getSecretCode(): String? {
         return secretCode
     }
+
 }
+
+
