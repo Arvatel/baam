@@ -36,7 +36,7 @@ class WebViewFragment : Fragment() {
                     goToScan()
                 }
 //                Toast.makeText((activity as Activity), "Trying to redirect {$url}", Toast.LENGTH_LONG).show()
-                Log.d("My Webview", url)
+//                Log.d("My Webview", url)
 
                 return false //Allow WebView to load url
             }
@@ -68,7 +68,7 @@ class WebViewFragment : Fragment() {
             cookie = cookieManager.getCookie(mainUrl)
 
         (activity as InterfaceDataSaver).setCookie(cookie)
-        Toast.makeText((activity as Activity), "Cookie: {$cookie}", Toast.LENGTH_LONG).show()
+//        Toast.makeText((activity as Activity), "Cookie: {$cookie}", Toast.LENGTH_LONG).show()
         Navigation.findNavController(mainView).navigate(R.id.action_webViewFragment_to_QRScanner)
     }
 

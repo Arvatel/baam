@@ -3,12 +3,12 @@ package com.arvatel.baam
 import android.Manifest
 import android.app.Activity
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
+import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
 import com.budiyev.android.codescanner.CodeScanner
 import com.budiyev.android.codescanner.CodeScannerView
@@ -16,7 +16,7 @@ import com.budiyev.android.codescanner.DecodeCallback
 import kotlinx.android.synthetic.main.fragment_q_r_scanner.view.*
 
 
-class QRScannerFragment : Fragment() {
+class QRScannerFragment : Fragment(), InterfaceResponseCallback {
 
     private lateinit var codeScanner: CodeScanner
     private lateinit var mainView: View
@@ -33,12 +33,16 @@ class QRScannerFragment : Fragment() {
         codeScanner = CodeScanner(activity, scannerView)
         codeScanner.decodeCallback = DecodeCallback {
             activity.runOnUiThread {
-                Toast.makeText(activity, it.text, Toast.LENGTH_LONG).show()
+
+//                Toast.makeText(activity, it.text, Toast.LENGTH_LONG).show()
+
                 saveQR(it.text)
 
-                val controller = Controller()
-                controller.start((activity as InterfaceDataSaver).getCookie(),
-                        (activity as InterfaceDataSaver).getSession(), (activity as InterfaceDataSaver).getSecretCode())
+                val controller = BaamApiController(this)
+                controller.start()
+                controller.submitChallenge((activity as InterfaceDataSaver).getCookie(),
+                                (activity as InterfaceDataSaver).getSession(),
+                                (activity as InterfaceDataSaver).getSecretCode())
             }
         }
         scannerView.setOnClickListener {
@@ -51,15 +55,28 @@ class QRScannerFragment : Fragment() {
         requestPermissions()
     }
 
-    private fun saveQR(qr : String?){
+    private fun saveQR(qr: String?){
 
         val data = qr?.substringAfter('#')
 
         (activity as InterfaceDataSaver).setSession(data?.substringBefore('-'))
         (activity as InterfaceDataSaver).setSecretCode(data?.substringAfter('-'))
 
-        Toast.makeText(activity, "Session: ${(activity as InterfaceDataSaver).getSession()}, " +
-                "SecretCode: ${(activity as InterfaceDataSaver).getSecretCode()}", Toast.LENGTH_LONG).show()
+//        Toast.makeText(activity, "Session: ${(activity as InterfaceDataSaver).getSession()}, " +
+//                "SecretCode: ${(activity as InterfaceDataSaver).getSecretCode()}", Toast.LENGTH_LONG).show()
+    }
+
+    fun goToWeb(){
+        Navigation.findNavController(mainView).navigate(R.id.action_QRScanner_to_webViewFragment)
+    }
+
+    fun checkCode(code : Int){
+        if (code == CODE_OK)
+            Toast.makeText(activity, "Success", Toast.LENGTH_LONG).show()
+        if (code == CODE_REDIRECT)
+            goToWeb()
+        if (code == CODE_ERROR)
+            Toast.makeText(activity, "Try again", Toast.LENGTH_LONG).show()
     }
 
 
@@ -80,5 +97,12 @@ class QRScannerFragment : Fragment() {
     companion object{
         private val permissionList = arrayOf(Manifest.permission.CAMERA)
         private const val MY_PERMISSION_REQUEST_CODE = 1001
+        var CODE_REDIRECT = 300
+        var CODE_OK = 200
+        var CODE_ERROR = 400
+    }
+
+    override fun responseCallBack(responseCode: Int) {
+        checkCode(responseCode)
     }
 }

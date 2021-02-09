@@ -19,6 +19,14 @@ interface InterfaceSendRequest{
     fun sendRequest()
 }
 
+interface InterfaceCallBack {
+    fun callbackCall()
+}
+
+interface InterfaceResponseCallback {
+    fun responseCallBack(responseCode : Int)
+}
+
 class MainActivity : AppCompatActivity(), InterfaceDataSaver{
 
     private var cookie: String? = null
