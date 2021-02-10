@@ -1,5 +1,6 @@
-package com.arvatel.baam
+package com.arvatel.baam.network
 
+import com.arvatel.baam.InterfaceResponseCallback
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import okhttp3.OkHttpClient
@@ -17,13 +18,13 @@ class BaamApiController (var callback: InterfaceResponseCallback) {
     private lateinit var okClient: OkHttpClient
     private lateinit var logging: HttpLoggingInterceptor
     private lateinit var gson: Gson
-    var code : Int = 0
 
     fun start() {
         gson = GsonBuilder()
                 .setLenient()
                 .create()
         logging = HttpLoggingInterceptor()
+
         logging.setLevel(HttpLoggingInterceptor.Level.BODY)
         okClient = OkHttpClient.Builder()
                 .addInterceptor(logging)
@@ -53,8 +54,17 @@ class BaamApiController (var callback: InterfaceResponseCallback) {
                     println("Redirect")
                 }
                 if (response.isSuccessful) {
-                    callback.responseCallBack(CODE_OKAY)
-                    println("Success")
+                    var ur = response.raw().request.url.toString()
+                    ur = ur.substringAfter("//")
+                    ur = ur.substringBefore("/")
+
+                    if (ur == BASE_URL) {
+                        callback.responseCallBack(CODE_OKAY)
+                        println("Success")
+                    }
+                    else{
+                        callback.responseCallBack(CODE_REDIRECT)
+                    }
                 } else {
                     callback.responseCallBack(CODE_ERROR)
                 }

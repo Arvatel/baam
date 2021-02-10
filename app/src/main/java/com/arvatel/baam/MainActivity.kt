@@ -4,6 +4,7 @@ import android.Manifest
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.navigation.fragment.NavHostFragment
 
 
 interface InterfaceDataSaver{
@@ -17,10 +18,6 @@ interface InterfaceDataSaver{
 
 interface InterfaceSendRequest{
     fun sendRequest()
-}
-
-interface InterfaceCallBack {
-    fun callbackCall()
 }
 
 interface InterfaceResponseCallback {
@@ -37,6 +34,9 @@ class MainActivity : AppCompatActivity(), InterfaceDataSaver{
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         requestPermissions()
+
+        val navHostFragment = supportFragmentManager.findFragmentById(R.id.navHostFragmentContainer) as NavHostFragment
+        val navController = navHostFragment.navController
     }
 
     private fun requestPermissions() {

@@ -9,7 +9,8 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
-import androidx.navigation.Navigation
+import androidx.navigation.fragment.NavHostFragment
+import com.arvatel.baam.network.BaamApiController
 import com.budiyev.android.codescanner.CodeScanner
 import com.budiyev.android.codescanner.CodeScannerView
 import com.budiyev.android.codescanner.DecodeCallback
@@ -33,8 +34,6 @@ class QRScannerFragment : Fragment(), InterfaceResponseCallback {
         codeScanner = CodeScanner(activity, scannerView)
         codeScanner.decodeCallback = DecodeCallback {
             activity.runOnUiThread {
-
-//                Toast.makeText(activity, it.text, Toast.LENGTH_LONG).show()
 
                 saveQR(it.text)
 
@@ -61,16 +60,15 @@ class QRScannerFragment : Fragment(), InterfaceResponseCallback {
 
         (activity as InterfaceDataSaver).setSession(data?.substringBefore('-'))
         (activity as InterfaceDataSaver).setSecretCode(data?.substringAfter('-'))
-
-//        Toast.makeText(activity, "Session: ${(activity as InterfaceDataSaver).getSession()}, " +
-//                "SecretCode: ${(activity as InterfaceDataSaver).getSecretCode()}", Toast.LENGTH_LONG).show()
     }
 
-    fun goToWeb(){
-        Navigation.findNavController(mainView).navigate(R.id.action_QRScanner_to_webViewFragment)
+    private fun goToWeb(){
+        val navHostFragment = (activity as MainActivity).supportFragmentManager.findFragmentById(R.id.navHostFragmentContainer) as NavHostFragment
+        val navController = navHostFragment.navController
+        navController.navigate(R.id.action_QRScanner_to_webViewFragment)
     }
 
-    fun checkCode(code : Int){
+    private fun checkCode(code : Int){
         if (code == CODE_OK)
             Toast.makeText(activity, "Success", Toast.LENGTH_LONG).show()
         if (code == CODE_REDIRECT)

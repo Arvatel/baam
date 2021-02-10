@@ -1,4 +1,4 @@
-package com.arvatel.baam;
+package com.arvatel.baam.network;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

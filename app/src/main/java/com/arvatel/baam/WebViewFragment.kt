@@ -12,6 +12,7 @@ import android.webkit.WebViewClient
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
+import androidx.navigation.fragment.NavHostFragment
 import kotlinx.android.synthetic.main.fragment_web_view.view.*
 
 
@@ -31,19 +32,18 @@ class WebViewFragment : Fragment() {
         myWebView.loadUrl(mainUrl)
 
         myWebView.webViewClient = object : WebViewClient() {
+
             override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
                 if (url == mainUrl){
                     goToScan()
                 }
-//                Toast.makeText((activity as Activity), "Trying to redirect {$url}", Toast.LENGTH_LONG).show()
-//                Log.d("My Webview", url)
 
                 return false //Allow WebView to load url
             }
 
             override fun onPageFinished(view: WebView?, url: String?) {
 
-                if (view != null) {
+                if (view != null && url == mainUrl) {
                     goToScan()
                 }
 
@@ -51,10 +51,6 @@ class WebViewFragment : Fragment() {
             }
         }
         myWebView.settings.javaScriptEnabled = true
-
-//        view.button.setOnClickListener {
-//            Navigation.findNavController(mainView).navigate(R.id.action_webViewFragment_to_QRScanner)
-//        }
 
         return view
     }
@@ -64,13 +60,15 @@ class WebViewFragment : Fragment() {
         cookieManager.acceptCookie()
         var cookie : String? = null
 
+
         if (cookieManager.hasCookies())
             cookie = cookieManager.getCookie(mainUrl)
 
+//        cookie = "cookie :)"
         (activity as InterfaceDataSaver).setCookie(cookie)
-//        Toast.makeText((activity as Activity), "Cookie: {$cookie}", Toast.LENGTH_LONG).show()
-        Navigation.findNavController(mainView).navigate(R.id.action_webViewFragment_to_QRScanner)
+
+        val navHostFragment = (activity as MainActivity).supportFragmentManager.findFragmentById(R.id.navHostFragmentContainer) as NavHostFragment
+
+        navHostFragment.navController.navigate(R.id.action_webViewFragment_to_QRScanner)
     }
-
-
 }

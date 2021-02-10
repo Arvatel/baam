@@ -1,4 +1,4 @@
-package com.arvatel.baam;
+package com.arvatel.baam.network;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
