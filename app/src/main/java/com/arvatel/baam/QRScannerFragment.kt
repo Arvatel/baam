@@ -10,6 +10,10 @@ import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.NavHostFragment
+import com.arvatel.baam.interfaces.InterfaceAcceptRedirect
+import com.arvatel.baam.interfaces.InterfaceDataSaver
+import com.arvatel.baam.interfaces.InterfaceResponseCallback
+import com.arvatel.baam.interfaces.InterfaceSendRequest
 import com.arvatel.baam.network.BaamApiController
 import com.budiyev.android.codescanner.CodeScanner
 import com.budiyev.android.codescanner.CodeScannerView
@@ -71,8 +75,10 @@ class QRScannerFragment : Fragment(), InterfaceResponseCallback {
     private fun checkCode(code : Int){
         if (code == CODE_OK)
             Toast.makeText(activity, "Success", Toast.LENGTH_LONG).show()
-        if (code == CODE_REDIRECT)
+        if (code == CODE_REDIRECT) {
+            (activity as InterfaceAcceptRedirect).setAccept(true)
             goToWeb()
+        }
         if (code == CODE_ERROR)
             Toast.makeText(activity, "Try again", Toast.LENGTH_LONG).show()
     }

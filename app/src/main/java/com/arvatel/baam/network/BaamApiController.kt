@@ -1,6 +1,6 @@
 package com.arvatel.baam.network
 
-import com.arvatel.baam.InterfaceResponseCallback
+import com.arvatel.baam.interfaces.InterfaceResponseCallback
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import okhttp3.OkHttpClient
@@ -51,16 +51,14 @@ class BaamApiController (var callback: InterfaceResponseCallback) {
             override fun onResponse(call: Call<Void?>, response: Response<Void?>) {
                 if (response.code() in 300..399) {
                     callback.responseCallBack(CODE_REDIRECT)
-                    println("Redirect")
                 }
+
                 if (response.isSuccessful) {
                     var ur = response.raw().request.url.toString()
-                    ur = ur.substringAfter("//")
-                    ur = ur.substringBefore("/")
+                    ur = ur.substringBefore("//") + "//" + ur.substringAfter("//").substringBefore("/")
 
                     if (ur == BASE_URL) {
                         callback.responseCallBack(CODE_OKAY)
-                        println("Success")
                     }
                     else{
                         callback.responseCallBack(CODE_REDIRECT)

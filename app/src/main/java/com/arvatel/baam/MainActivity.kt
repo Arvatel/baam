@@ -5,38 +5,21 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.navigation.fragment.NavHostFragment
+import com.arvatel.baam.interfaces.InterfaceAcceptRedirect
+import com.arvatel.baam.interfaces.InterfaceDataSaver
 
 
-interface InterfaceDataSaver{
-    fun getCookie() : String?
-    fun setCookie(c: String?)
-    fun getSession() : String?
-    fun setSession(s: String?)
-    fun getSecretCode() : String?
-    fun setSecretCode(sc: String?)
-}
-
-interface InterfaceSendRequest{
-    fun sendRequest()
-}
-
-interface InterfaceResponseCallback {
-    fun responseCallBack(responseCode : Int)
-}
-
-class MainActivity : AppCompatActivity(), InterfaceDataSaver{
+class MainActivity : AppCompatActivity(), InterfaceDataSaver, InterfaceAcceptRedirect {
 
     private var cookie: String? = null
     private var secretCode: String? = null
     private var session: String? = null
+    private var acceptRedirect: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         requestPermissions()
-
-        val navHostFragment = supportFragmentManager.findFragmentById(R.id.navHostFragmentContainer) as NavHostFragment
-        val navController = navHostFragment.navController
     }
 
     private fun requestPermissions() {
@@ -75,6 +58,14 @@ class MainActivity : AppCompatActivity(), InterfaceDataSaver{
 
     override fun getSecretCode(): String? {
         return secretCode
+    }
+
+    override fun setAccept(accept: Boolean) {
+        acceptRedirect = accept
+    }
+
+    override fun getAccept(): Boolean {
+        return acceptRedirect
     }
 
 }
